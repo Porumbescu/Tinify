@@ -1,26 +1,30 @@
 package com.porumb.tinify;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
-@RequestMapping("/api/tinify")
+@RequestMapping("/")
 public class TinifyController {
     @Autowired
     TinifyService tinifyService;
 
-    @PostMapping("/shorten")
+    @PostMapping("/api/tinify/shorten")
     public ResponseEntity<String> shortenUrl(@RequestBody String originalUrl){
         String shortCode = tinifyService.shortenUrl(originalUrl);
-        return ResponseEntity.ok(shortCode);
+        String shortenedUrl = "http://localhost:8080/" + shortCode;
+        return ResponseEntity.ok(shortenedUrl);
     }
-    @GetMapping("/resolve/{shortCode}")
-    public ResponseEntity<String> resolveUrl(@PathVariable String shortCode){
+    @GetMapping("/{shortCode}")
+    public ResponseEntity<String> redirectToOriginal (@PathVariable String shortCode){
         String originalUrl = tinifyService.resolveUrl(shortCode);
         if(originalUrl == null){
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(originalUrl);
+        return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(originalUrl)).build();
     }
 }
