@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Shortener from './Shortener';
 import Result from './Result';
@@ -10,44 +10,54 @@ function App() {
   const handleShorten = async (url) => {
     const response = await fetch('http://localhost:8080/api/tinify/shorten', {
       method: 'POST',
-      headers:{
+      headers: {
         'Content-Type': 'text/plain',
       },
       body: url,
     });
 
-    if(response.ok){
+    if (response.ok) {
       const result = await response.text();
       setShortUrl(result);
-    }else{
+    } else {
       console.error('Failed to shorten the URL');
     }
   }
 
   const fadeIn = {
-    hidden: {opacity: 0},
-    visible: {opacity: 1, transition: {duration: 1} }
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 1 } }
   }
 
   const slideIn = {
-    hidden: {x: '-100vw'},
-    visible: {x: 0, transition: {duration: 0.5} }
-}
+    hidden: { x: '-100vw' },
+    visible: { x: 0, transition: { duration: 0.5 } }
+  }
 
-return (
-  <div className="App">
-    <h1>TINIFY</h1>
-    <h2>-URL SHORTENER-</h2>
-    <motion.div variants={slideIn} initial="hidden" animate="visible">
-      <Shortener onShorten={handleShorten} />
-    </motion.div>
-    {shortUrl && ( 
-      <motion.div variants={fadeIn} initial="hidden" animate="visible">
-        <Result shortUrl={shortUrl} />
-      </motion.div>
-    )}
-  </div>
-);
+  return (
+    <div className="App">
+
+      <div class="header">
+        <h1>TINIFY</h1>
+        <h2>-URL SHORTENER-</h2>
+      </div>
+
+      <div class="dark-section">
+        <motion.div variants={slideIn} initial="hidden" animate="visible">
+          <Shortener onShorten={handleShorten} />
+        </motion.div>
+        {shortUrl && (
+          <motion.div variants={fadeIn} initial="hidden" animate="visible">
+            <Result shortUrl={shortUrl} />
+          </motion.div>
+        )}
+      </div>
+
+      <div className="footer">
+        <p>Made with <span>Spring & React</span></p>
+      </div>
+    </div>
+  );
 
 }
 
